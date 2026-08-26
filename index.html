@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ค้นหาและดาวน์โหลดเกียรติบัตรหลักสูตร SUT-DIGITECH Project Management ด้วยรหัสนักศึกษา">
+<title>เกียรติบัตร Project Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=Sarabun:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --blue:#1A4599;
+  --blue-deep:#12336F;
+  --ink:#14284D;
+  --orange:#FF931E;
+  --orange-deep:#E37F12;
+  --sunny:#FFB526;
+  --placeholder:#C2CBE0;
+  --paper:#F4F5F3;
+  --card:#FFFFFF;
+  --slate:#6E7B93;
+  --line:#DFE3EC;
+  --ok:#1E7A4B;
+  --warn:#C2410C;
+
+  /* the artwork is 1920x1080; every measurement below is taken from it
+     and expressed against the hero width so the whole composition scales */
+  --hero-ratio:16/9;
+  --pill-h:max(46px, 5.31vw);
+  --pill-w:39.53%;
+}
+@media (max-width:1023.98px){
+  :root{ --hero-ratio:4/3; --pill-h:max(46px, 7.08vw); --pill-w:52.71%; }
+}
+@media (max-width:699.98px){
+  :root{ --hero-ratio:1/1; --pill-h:max(46px, 9.44vw); --pill-w:74%; }
+}
+@media (max-width:430px){
+  :root{ --pill-w:80%; }
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Sarabun",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:999px}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;
+  width:100%;
+  aspect-ratio:var(--hero-ratio);
+  overflow:hidden;
+  background:var(--paper);
+}
+.hero__art{
+  display:block;
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:50% 50%;
+}
+
+/* search sits at the artwork's own coordinates, centred at every width */
+.finder{
+  position:absolute;
+  top:43.33%;
+  left:50%;
+  transform:translateX(-50%);
+  width:var(--pill-w);
+}
+
+.pill{
+  position:relative;
+  display:flex;align-items:center;
+  height:var(--pill-h);
+  padding:0 calc(var(--pill-h) * .86);
+  background:var(--card);
+  border:max(2px, .21vw) solid var(--orange);
+  border-radius:999px;
+  transition:box-shadow .18s ease;
+}
+.pill:focus-within{box-shadow:0 0 0 4px rgba(255,147,30,.20)}
+.pill input{
+  flex:1;min-width:0;width:100%;
+  border:0;background:transparent;
+  text-align:center;
+  font-family:"Kanit",sans-serif;
+  font-size:max(15px, calc(var(--pill-h) * .30));
+  font-weight:500;
+  letter-spacing:.06em;
+  color:var(--ink);
+}
+.pill input::placeholder{color:var(--placeholder);font-weight:500;letter-spacing:.06em}
+.pill input:focus{outline:none}
+
+.go{
+  position:absolute;
+  right:calc(var(--pill-h) * .14);
+  top:50%;transform:translateY(-50%);
+  display:grid;place-items:center;
+  width:calc(var(--pill-h) * .72);
+  height:calc(var(--pill-h) * .72);
+  border:0;border-radius:50%;
+  background:transparent;
+  color:var(--orange);
+  cursor:pointer;
+  transition:background .16s ease;
+}
+.go:hover{background:rgba(255,147,30,.12)}
+.go:active{background:rgba(255,147,30,.22)}
+.go[disabled]{opacity:.5;cursor:default}
+.go svg{width:54%;height:54%;display:block}
+.go .spin{
+  width:48%;height:48%;
+  border:2px solid rgba(255,147,30,.30);
+  border-top-color:var(--orange);
+}
+
+.hint{
+  margin:calc(var(--pill-h) * .24) auto 0;
+  width:fit-content;max-width:100%;
+  padding:.3em .9em;
+  border-radius:999px;
+  background:rgba(255,255,255,.82);
+  text-align:center;
+  font-size:clamp(11px,1.02vw,15px);
+  color:var(--slate);
+  display:flex;align-items:center;justify-content:center;gap:.45em;flex-wrap:wrap;
+}
+.hint .long{display:inline}
+@media (max-width:699.98px){ .hint .long{display:none} }
+.hint code{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.95em;
+  background:rgba(26,69,153,.08);
+  color:var(--blue);
+  padding:.1em .5em;border-radius:5px;
+}
+.msg{
+  margin:calc(var(--pill-h) * .18) 0 0;
+  display:none;
+  padding:.75em 1.1em;
+  border-radius:14px;
+  background:#FFF3EA;
+  border:1px solid #F6D3B4;
+  color:var(--warn);
+  font-size:clamp(11.5px,1.02vw,15px);
+  text-align:left;
+  box-shadow:0 10px 26px -18px rgba(194,65,12,.8);
+}
+.msg.show{display:block}
+.msg b{font-family:"Kanit",sans-serif;font-weight:600;display:block;color:#9A3412}
+
+/* ---------- footer ---------- */
+.foot{
+  padding:30px 24px 40px;
+  text-align:center;
+  color:var(--slate);
+  font-size:13px;
+  line-height:1.75;
+}
+.foot .rule{width:34px;height:3px;border-radius:2px;background:var(--sunny);margin:0 auto 14px}
+.foot strong{color:var(--ink);font-weight:600}
+
+/* ---------- result sheet ---------- */
+.scrim{
+  position:fixed;inset:0;z-index:40;
+  display:none;place-items:center;
+  padding:clamp(12px,3vw,40px);
+  background:rgba(15,32,64,.62);
+  backdrop-filter:blur(3px);
+}
+.scrim.show{display:grid}
+.sheet{
+  width:min(760px,100%);
+  max-height:100%;
+  overflow-y:auto;
+  background:var(--card);
+  border-radius:22px;
+  box-shadow:0 30px 80px -30px rgba(8,20,45,.7);
+  animation:rise .26s cubic-bezier(.2,.9,.3,1);
+}
+@keyframes rise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){ .sheet{animation:none} }
+
+.sheet__top{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  padding:22px clamp(18px,3vw,30px) 0;
+}
+.eyebrow{
+  font-family:"Kanit",sans-serif;font-weight:600;
+  font-size:12px;letter-spacing:.12em;
+  color:var(--ok);
+  display:flex;align-items:center;gap:7px;
+}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.x{
+  flex:none;border:0;background:#EEF1F6;color:var(--slate);
+  width:36px;height:36px;border-radius:50%;
+  font-size:19px;line-height:1;cursor:pointer;
+  transition:background .16s ease,color .16s ease;
+}
+.x:hover{background:#E2E7F0;color:var(--ink)}
+
+.who{padding:10px clamp(18px,3vw,30px) 0}
+.who h2{
+  margin:0;
+  font-family:"Kanit",sans-serif;font-weight:600;
+  font-size:clamp(20px,3.1vw,29px);
+  line-height:1.25;letter-spacing:.01em;
+  text-wrap:balance;
+}
+.rec{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:12px}
+.rec div{display:flex;flex-direction:column;gap:2px}
+.rec dt{
+  font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--slate);font-weight:600;font-family:"Kanit",sans-serif;
+}
+.rec dd{
+  margin:0;
+  font-family:"IBM Plex Mono",monospace;font-weight:600;
+  font-size:15px;color:var(--blue);
+  font-variant-numeric:tabular-nums;
+}
+.preview{
+  margin:20px clamp(18px,3vw,30px) 0;
+  border:1px solid var(--line);
+  border-radius:14px;overflow:hidden;background:#fff;line-height:0;
+}
+.preview img{width:100%;height:auto;display:block}
+.save{
+  display:flex;align-items:flex-start;gap:12px;
+  margin:16px clamp(18px,3vw,30px) 0;
+  padding:14px 16px;
+  border-radius:14px;
+  background:#FFF6EC;
+  border:1px solid #FBDCBB;
+}
+.save svg{width:22px;height:22px;flex:none;color:var(--orange-deep);margin-top:2px}
+.save div{display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:1.55;color:#8A4A11}
+.save b{font-family:"Kanit",sans-serif;font-weight:600;color:#7A3E0B}
+.acts{display:flex;gap:12px;flex-wrap:wrap;padding:18px clamp(18px,3vw,30px) 24px}
+.btn{
+  flex:1 1 190px;
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  height:52px;padding:0 22px;
+  border-radius:13px;border:1px solid transparent;
+  font-family:"Kanit",sans-serif;font-weight:600;font-size:16px;
+  cursor:pointer;
+  transition:background .16s ease,transform .16s ease,border-color .16s ease;
+}
+.btn--primary{background:var(--orange);color:#fff}
+.btn--primary:hover{background:var(--orange-deep)}
+.btn--primary:active{transform:scale(.985)}
+.btn--primary[disabled]{opacity:.6;cursor:default}
+.btn--ghost{background:#fff;border-color:var(--line);color:var(--ink);flex:0 1 150px}
+.acts--solo .btn--ghost{flex:1 1 100%}
+.btn--ghost:hover{border-color:#C3CBDA;background:#FAFBFD}
+.note{padding:0 clamp(18px,3vw,30px) 24px;margin-top:-10px;font-size:13px;color:var(--slate)}
+.note.err{color:var(--warn)}
+
+.spin{
+  width:17px;height:17px;flex:none;
+  border:2.5px solid rgba(255,255,255,.4);
+  border-top-color:#fff;border-radius:50%;
+  animation:sp .7s linear infinite;
+}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){ .spin{animation-duration:2s} }
+
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.btn--primary{text-decoration:none}
+.preview{position:relative;min-height:60px}
+.preview.loading::after{
+  content:"";position:absolute;inset:0;margin:auto;
+  width:26px;height:26px;border-radius:50%;
+  border:3px solid var(--line);border-top-color:var(--orange);
+  animation:sp .8s linear infinite;
+}
+</style>
+</head>
+<body>
+
+<main>
+  <div class="hero">
+    <img class="hero__art" id="art" src="assets/bg.jpg" alt="Project Management — DGT x SEDA, Institute of Digital Arts and Science, Suranaree University of Technology">
+
+    <div class="finder">
+      <form class="pill" id="form1" autocomplete="off">
+        <input id="q1" type="text" inputmode="text" placeholder="กรอกรหัสนักศึกษา" aria-label="รหัสนักศึกษา" maxlength="20">
+        <button class="go" type="submit" id="btn1" aria-label="ค้นหา"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.4 15.4L21 21"></path></svg></button>
+      </form>
+      <p class="hint"><span class="long">พิมพ์รหัสแล้วกด Enter หรือแตะแว่นขยาย ·</span> ตัวอย่าง <code>B6802806</code></p>
+      <div class="msg" id="err1" role="alert"></div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="rule"></div>
+    <p>เกียรติบัตรหลักสูตร <strong>SUT–DIGITECH Project Management</strong> จำนวน <strong id="total">—</strong> ใบ<br>
+    สถาบันดิจิทัลอาร์ตและวิทยาศาสตร์ มหาวิทยาลัยเทคโนโลยีสุรนารี</p>
+  </footer>
+</main>
+
+<div class="scrim" id="scrim" role="dialog" aria-modal="true" aria-labelledby="rname">
+  <div class="sheet" id="sheet">
+    <div class="sheet__top">
+      <span class="eyebrow"><span class="dot"></span>พบเกียรติบัตรแล้ว</span>
+      <button class="x" id="close" aria-label="ปิด">&times;</button>
+    </div>
+    <div class="who">
+      <h2 id="rname"></h2>
+      <div class="rec">
+        <div><dt>รหัสนักศึกษา</dt><dd id="rsid"></dd></div>
+        <div><dt>Certificate ID</dt><dd id="rcid"></dd></div>
+      </div>
+    </div>
+    <div class="preview"><img id="rimg" alt=""></div>
+    <div class="acts">
+      <a class="btn btn--primary" id="dl" download href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:19px;height:19px">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path>
+        </svg>
+        บันทึกรูปเกียรติบัตร
+      </a>
+      <button class="btn btn--ghost" id="close2">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<p class="sr" id="live" aria-live="polite"></p>
+<script>
+(function(){
+  "use strict";
+  var DATA = [], index = Object.create(null);
+
+  var scrim = document.getElementById("scrim");
+  var live  = document.getElementById("live");
+  var dl    = document.getElementById("dl");
+  var preview = document.querySelector(".preview");
+  var lastFocus = null;
+
+  fetch("data.json")
+    .then(function(r){ return r.json(); })
+    .then(function(rows){
+      DATA = rows;
+      rows.forEach(function(r){ index[r.i.toUpperCase()] = r; });
+      document.getElementById("total").textContent = rows.length;
+    })
+    .catch(function(){
+      document.getElementById("total").textContent = "—";
+      var e = document.getElementById("err1");
+      e.innerHTML = "<span><b>โหลดรายชื่อไม่สำเร็จ</b>ไฟล์ data.json อาจไม่ได้อยู่โฟลเดอร์เดียวกับ index.html " +
+                    "หรือกำลังเปิดไฟล์จากเครื่องโดยตรง — ลองอัปโหลดขึ้นเว็บก่อนนะ</span>";
+      e.classList.add("show");
+    });
+
+  function normalize(v){ return String(v||"").toUpperCase().replace(/[\s\-_.]/g,""); }
+  function lookup(raw){
+    var k = normalize(raw);
+    if(!k) return null;
+    if(index[k]) return index[k];
+    if(/^\d+$/.test(k)){
+      if(index["B"+k]) return index["B"+k];
+      if(index["B6"+k]) return index["B6"+k];
+    }
+    if(k.charAt(0)==="B" && index["B6"+k.slice(1)]) return index["B6"+k.slice(1)];
+    return null;
+  }
+
+  function openSheet(rec){
+    lastFocus = document.activeElement;
+    document.getElementById("rname").textContent = rec.n;
+    document.getElementById("rsid").textContent  = rec.i;
+    document.getElementById("rcid").textContent  = "DGT-PJMGT2026-" + rec.c;
+
+    var img = document.getElementById("rimg");
+    preview.classList.add("loading");
+    img.style.visibility = "hidden";
+    img.onload = function(){ preview.classList.remove("loading"); img.style.visibility = ""; };
+    img.onerror = function(){ preview.classList.remove("loading"); img.style.visibility = ""; };
+    img.src = "certs/" + rec.i + ".jpg";
+    img.alt = "เกียรติบัตรของ " + rec.n;
+
+    dl.href = "certs/" + rec.i + ".jpg";
+    dl.setAttribute("download", "Certificate_" + rec.c + "_" + rec.i + ".jpg");
+
+    scrim.classList.add("show");
+    document.body.style.overflow = "hidden";
+    live.textContent = "พบเกียรติบัตรของ " + rec.n;
+    document.getElementById("close").focus();
+  }
+
+  function closeSheet(){
+    scrim.classList.remove("show");
+    document.body.style.overflow = "";
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  document.getElementById("close").addEventListener("click", closeSheet);
+  document.getElementById("close2").addEventListener("click", closeSheet);
+  scrim.addEventListener("click", function(e){ if(e.target === scrim) closeSheet(); });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && scrim.classList.contains("show")) closeSheet();
+  });
+
+  var form = document.getElementById("form1");
+  var input= document.getElementById("q1");
+  var btn  = document.getElementById("btn1");
+  var err  = document.getElementById("err1");
+
+  input.addEventListener("input", function(){ err.classList.remove("show"); });
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var raw = input.value;
+    err.classList.remove("show");
+
+    if(!normalize(raw)){
+      err.innerHTML = "<span><b>ยังไม่ได้กรอกรหัส</b>พิมพ์รหัสนักศึกษาของคุณลงในช่องด้านบนก่อนนะ</span>";
+      err.classList.add("show");
+      input.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    var label = btn.innerHTML;
+    btn.innerHTML = '<span class="spin"></span>';
+
+    setTimeout(function(){
+      btn.disabled = false;
+      btn.innerHTML = label;
+      var rec = lookup(raw);
+      if(rec){ openSheet(rec); }
+      else{
+        err.innerHTML = "<span><b>ไม่พบรหัส " + normalize(raw).replace(/[<>&]/g,"") + "</b>" +
+          "ลองตรวจดูว่าพิมพ์ครบทุกหลักไหม (รหัสขึ้นต้นด้วย B6 ตามด้วยตัวเลข 6 หลัก) " +
+          "ถ้ายังไม่เจอ แปลว่ารหัสนี้ยังไม่มีในรายชื่อผู้รับเกียรติบัตร — ติดต่อผู้จัดได้เลย</span>";
+        err.classList.add("show");
+        live.textContent = "ไม่พบรหัสนักศึกษานี้";
+      }
+    }, 300);
+  });
+})();
+</script>
+</body>
+</html>
